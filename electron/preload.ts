@@ -1,9 +1,10 @@
 import { contextBridge, ipcRenderer } from "electron";
-import type { AgentPetBridge, AgentSnapshot, PetAlert, WindowResizeEdge } from "../shared/types";
+import type { AgentPetBridge, AgentSnapshot, EnvironmentProbe, PetAlert, WindowResizeEdge } from "../shared/types";
 import type { AppUserConfig } from "../shared/config";
 
 const agentPetBridge: AgentPetBridge = {
   getConfig: () => ipcRenderer.invoke("agent:getConfig") as Promise<AppUserConfig>,
+  probeEnvironment: () => ipcRenderer.invoke("agent:probeEnvironment") as Promise<EnvironmentProbe>,
   getSnapshot: () => ipcRenderer.invoke("agent:getSnapshot") as Promise<AgentSnapshot>,
   getExpanded: () => ipcRenderer.invoke("window:getExpanded") as Promise<boolean>,
   getScale: () => ipcRenderer.invoke("window:getScale") as Promise<number>,

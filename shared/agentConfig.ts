@@ -3,6 +3,8 @@ export interface AgentRule {
   name: string;
   matchers: string[];
   aggregateByAgent?: boolean;
+  appNames?: string[];
+  logPathCandidates?: string[];
   dashboardUrl?: string;
   statusUrl?: string;
 }
@@ -29,23 +31,82 @@ export const AGENT_RULES: AgentRule[] = [
     id: "codex",
     name: "Codex",
     matchers: ["codex", "openai"],
+    appNames: ["Codex"],
+    logPathCandidates: [
+      "~/.codex/logs_2.sqlite",
+      "~/.codex/log/codex-tui.log"
+    ],
     dashboardUrl: "codex://activate"
   },
   {
     id: "claude-code",
     name: "Claude Code",
-    matchers: ["claude", "anthropic"]
+    matchers: ["claude", "anthropic"],
+    appNames: ["Claude", "Claude Code"],
+    logPathCandidates: ["~/.claude/logs/latest.log"]
+  },
+  {
+    id: "cline",
+    name: "Cline",
+    matchers: ["cline"],
+    appNames: ["Cline"],
+    logPathCandidates: [
+      "~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/logs/cline.log"
+    ]
+  },
+  {
+    id: "aider",
+    name: "Aider",
+    matchers: ["aider"],
+    logPathCandidates: [
+      "~/.aider.log",
+      "~/.local/state/aider/aider.log"
+    ]
+  },
+  {
+    id: "trae",
+    name: "Trae",
+    matchers: ["trae"],
+    appNames: ["Trae"],
+    logPathCandidates: [
+      "~/Library/Application Support/Trae/logs/main.log"
+    ]
   },
   {
     id: "windsurf",
     name: "Windsurf",
-    matchers: ["windsurf", "codeium"]
+    matchers: ["windsurf", "codeium"],
+    appNames: ["Windsurf"]
+  },
+  {
+    id: "cursor",
+    name: "Cursor",
+    matchers: ["cursor", "cursor-agent"],
+    appNames: ["Cursor"],
+    logPathCandidates: [
+      "~/Library/Application Support/Cursor/logs/main.log"
+    ]
+  },
+  {
+    id: "gemini",
+    name: "Gemini",
+    matchers: ["gemini", "google-generativeai", "gemini-cli"],
+    appNames: ["Gemini"],
+    logPathCandidates: [
+      "~/.gemini/logs/latest.log",
+      "~/.config/gemini/logs/latest.log"
+    ]
   },
   {
     id: "kimi",
     name: "Kimi",
     matchers: ["kimi", "moonshot"],
     aggregateByAgent: true,
+    appNames: ["Kimi"],
+    logPathCandidates: [
+      "~/Library/Logs/kimi-desktop/main.log",
+      "~/.kimi/logs/kimi.log"
+    ],
     dashboardUrl: "kimi://activate"
   },
   {
@@ -53,6 +114,8 @@ export const AGENT_RULES: AgentRule[] = [
     name: "Hermes",
     matchers: ["hermes", "hermes-web-ui", "hermes-agent"],
     aggregateByAgent: true,
+    appNames: ["Hermes"],
+    logPathCandidates: ["~/.hermes/logs/agent.log"],
     dashboardUrl: "http://localhost:8648/#/hermes/session/mpo74xjzfa24qp"
   },
   {
@@ -60,6 +123,8 @@ export const AGENT_RULES: AgentRule[] = [
     name: "OpenClaw",
     matchers: ["openclaw", "openclaw/dist/index.js"],
     aggregateByAgent: true,
+    appNames: ["OpenClaw"],
+    logPathCandidates: ["~/.openclaw/logs/commands.log"],
     dashboardUrl: "http://127.0.0.1:18789/chat?session=agent%3Amain%3Amain"
   },
   {
@@ -96,6 +161,46 @@ export const AGENT_LOG_RULES: AgentLogRule[] = [
     tailLines: 10,
     errorMatchers: ["error", "failed", "exception"],
     runningMatchers: ["running", "started", "working"],
+    completionMatchers: ["completed", "finished", "done", "success"]
+  },
+  {
+    agentId: "cline",
+    path: "/Users/a111/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/logs/cline.log",
+    tailLines: 12,
+    errorMatchers: ["error", "failed", "exception"],
+    runningMatchers: ["running", "started", "working", "thinking", "tool"],
+    completionMatchers: ["completed", "finished", "done", "success"]
+  },
+  {
+    agentId: "aider",
+    path: "/Users/a111/.aider.log",
+    tailLines: 12,
+    errorMatchers: ["error", "failed", "exception"],
+    runningMatchers: ["running", "started", "working", "processing"],
+    completionMatchers: ["completed", "finished", "done", "success"]
+  },
+  {
+    agentId: "trae",
+    path: "/Users/a111/Library/Application Support/Trae/logs/main.log",
+    tailLines: 12,
+    errorMatchers: ["error", "failed", "exception"],
+    runningMatchers: ["running", "started", "working", "processing"],
+    completionMatchers: ["completed", "finished", "done", "success"]
+  },
+  {
+    agentId: "cursor",
+    path: "/Users/a111/Library/Application Support/Cursor/logs/main.log",
+    tailLines: 12,
+    errorMatchers: ["error", "failed", "exception"],
+    runningMatchers: ["running", "started", "working", "processing", "thinking"],
+    completionMatchers: ["completed", "finished", "done", "success"]
+  },
+  {
+    agentId: "gemini",
+    path: "/Users/a111/.gemini/logs/latest.log",
+    tailLines: 12,
+    errorMatchers: ["error", "failed", "exception"],
+    runningMatchers: ["running", "started", "working", "processing", "thinking"],
     completionMatchers: ["completed", "finished", "done", "success"]
   },
   {

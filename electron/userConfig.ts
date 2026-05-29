@@ -33,6 +33,7 @@ function buildAgentConfig(rule: AgentRule, logRule?: AgentLogRule): AgentMonitor
 
 export function defaultUserConfig(): AppUserConfig {
   return {
+    onboardingComplete: false,
     agents: AGENT_RULES.map((rule) =>
       buildAgentConfig(
         rule,
@@ -119,6 +120,7 @@ function normalizeUserConfig(input?: Partial<AppUserConfig> | null): AppUserConf
     );
 
   return {
+    onboardingComplete: input?.onboardingComplete ?? defaults.onboardingComplete,
     agents: [...agents, ...extras]
   };
 }

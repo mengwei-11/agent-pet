@@ -38,6 +38,25 @@ export interface AgentSnapshot {
   agents: AgentProcess[];
 }
 
+export interface AgentEnvironmentProbeItem {
+  id: string;
+  name: string;
+  appDetected: boolean;
+  appName?: string;
+  logDetected: boolean;
+  logPath: string;
+  dashboardUrl: string;
+  notes: string[];
+}
+
+export interface EnvironmentProbe {
+  platform: string;
+  readyCount: number;
+  appDetectedCount: number;
+  logDetectedCount: number;
+  agents: AgentEnvironmentProbeItem[];
+}
+
 export type WindowResizeEdge =
   | "top"
   | "right"
@@ -51,6 +70,7 @@ export type WindowResizeEdge =
 export interface AgentPetBridge {
   getSnapshot: () => Promise<AgentSnapshot>;
   getConfig: () => Promise<AppUserConfig>;
+  probeEnvironment: () => Promise<EnvironmentProbe>;
   getExpanded: () => Promise<boolean>;
   getScale: () => Promise<number>;
   getWindowSize: () => Promise<{ width: number; height: number }>;

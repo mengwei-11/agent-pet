@@ -15,5 +15,6 @@ export interface AgentMonitorConfigItem {
 }
 
 export interface AppUserConfig {
+  onboardingComplete: boolean;
   agents: AgentMonitorConfigItem[];
 }

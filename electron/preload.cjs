@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("agentPet", {
   getConfig: () => ipcRenderer.invoke("agent:getConfig"),
+  probeEnvironment: () => ipcRenderer.invoke("agent:probeEnvironment"),
   getSnapshot: () => ipcRenderer.invoke("agent:getSnapshot"),
   getExpanded: () => ipcRenderer.invoke("window:getExpanded"),
   getScale: () => ipcRenderer.invoke("window:getScale"),

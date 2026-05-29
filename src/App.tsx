@@ -4,6 +4,7 @@ import type {
   AgentHealth,
   AgentPetBridge,
   AgentSnapshot,
+  EnvironmentProbe,
   PetAlert,
   WindowResizeEdge
 } from "../shared/types";
@@ -322,6 +323,7 @@ export default function App() {
   const [dismissedBubbleKey, setDismissedBubbleKey] = useState<string | null>(null);
   const [bridgeError, setBridgeError] = useState<string | null>(null);
   const [orderedAgentIds, setOrderedAgentIds] = useState<string[]>([]);
+  const [environmentProbe, setEnvironmentProbe] = useState<EnvironmentProbe | null>(null);
   const status = overallStatus(snapshot);
   const summary = overallSummary(snapshot);
   const basePetMode = resolvePetMode(snapshot);
@@ -368,14 +370,16 @@ export default function App() {
       bridge.getSnapshot(),
       bridge.getExpanded(),
       bridge.getScale(),
-      bridge.getConfig()
+      bridge.getConfig(),
+      bridge.probeEnvironment()
     ])
-      .then(([data, savedExpanded, savedScale, config]) => {
+      .then(([data, savedExpanded, savedScale, config, probe]) => {
         if (mounted) {
           setSnapshot(data);
           setExpanded(savedExpanded);
           setScale(savedScale);
           setConfigDraft(config);
+          setEnvironmentProbe(probe);
           setBridgeError(null);
         }
       })
@@ -629,10 +633,33 @@ export default function App() {
       }
 
       return {
+        ...current,
         agents: current.agents.map((agent) =>
           agent.id === agentId ? updater(agent) : agent
         )
       };
+    });
+  }
+
+  function applyDetectedConfig() {
+    if (!configDraft || !environmentProbe) {
+      return;
+    }
+
+    setConfigDraft({
+      onboardingComplete: true,
+      agents: configDraft.agents.map((agent) => {
+        const detected = environmentProbe.agents.find((item) => item.id === agent.id);
+        if (!detected) {
+          return agent;
+        }
+
+        return {
+          ...agent,
+          enabled: detected.appDetected || detected.logDetected ? true : agent.enabled,
+          logPath: detected.logPath || agent.logPath
+        };
+      })
     });
   }
 
@@ -645,7 +672,9 @@ export default function App() {
 
     try {
       const saved = await bridge.saveConfig(configDraft);
+      const probe = await bridge.probeEnvironment();
       setConfigDraft(saved);
+      setEnvironmentProbe(probe);
       const nextSnapshot = await bridge.refreshSnapshot();
       if (nextSnapshot) {
         setSnapshot(nextSnapshot);
@@ -862,6 +891,24 @@ export default function App() {
               </div>
             </div>
 
+            {environmentProbe ? (
+              <div className="settings-detection-card">
+                <div className="settings-title">首次配置建议</div>
+                <div className="settings-subtitle">
+                  已探测到 {environmentProbe.readyCount} 个可用 Agent，本地应用 {environmentProbe.appDetectedCount} 个，日志路径 {environmentProbe.logDetectedCount} 个。
+                </div>
+                <div className="settings-inline-actions">
+                  <button
+                    className="ghost-button ghost-button-primary"
+                    onClick={applyDetectedConfig}
+                    type="button"
+                  >
+                    应用推荐配置
+                  </button>
+                </div>
+              </div>
+            ) : null}
+
             <div className="settings-list">
               {configDraft.agents.map((agent) => (
                 <div className="settings-card" key={agent.id}>
@@ -881,6 +928,12 @@ export default function App() {
                       启用
                     </label>
                   </div>
+
+                  {environmentProbe ? (
+                    <div className="settings-detected-notes">
+                      {(environmentProbe.agents.find((item) => item.id === agent.id)?.notes ?? []).join(" · ")}
+                    </div>
+                  ) : null}
 
                   <label className="settings-field">
                     <span>匹配关键字</span>

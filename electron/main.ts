@@ -10,6 +10,7 @@ import {
   saveAppState,
   type PersistedAppState
 } from "./appState.js";
+import { probeEnvironment } from "./environmentProbe.js";
 import { readAgentSnapshot } from "./processMonitor.js";
 import { loadUserConfig, getUserConfig, saveUserConfig } from "./userConfig.js";
 import type { AgentProcess, AgentSnapshot, PetAlert, WindowResizeEdge } from "../shared/types.js";
@@ -531,6 +532,7 @@ app.whenReady().then(async () => {
   expandedSize = clampExpandedSize(initialState.expandedSize ?? DEFAULT_EXPANDED_SIZE);
 
   ipcMain.handle("agent:getConfig", async () => getUserConfig());
+  ipcMain.handle("agent:probeEnvironment", async () => probeEnvironment());
   ipcMain.handle("agent:getSnapshot", async () => withReminderTimes(await readAgentSnapshot()));
   ipcMain.handle("agent:saveConfig", async (_event, config: AppUserConfig) => {
     const saved = await saveUserConfig(config);
