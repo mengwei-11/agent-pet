@@ -84,8 +84,10 @@ export async function probeEnvironment(): Promise<EnvironmentProbe> {
         name: rule.name,
         appDetected: app.appDetected,
         appName: app.appName,
+        appCandidates: [...(rule.appNames ?? [])],
         logDetected: log.logDetected,
         logPath: log.logPath,
+        logPathCandidates: (rule.logPathCandidates ?? []).map(expandHome),
         dashboardUrl: rule.dashboardUrl ?? "",
         notes
       };

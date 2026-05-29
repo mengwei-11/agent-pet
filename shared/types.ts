@@ -43,8 +43,10 @@ export interface AgentEnvironmentProbeItem {
   name: string;
   appDetected: boolean;
   appName?: string;
+  appCandidates: string[];
   logDetected: boolean;
   logPath: string;
+  logPathCandidates: string[];
   dashboardUrl: string;
   notes: string[];
 }

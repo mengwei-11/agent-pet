@@ -308,6 +308,10 @@ function textToList(value: string) {
     .filter(Boolean);
 }
 
+function probeForAgent(probe: EnvironmentProbe | null, agentId: string) {
+  return probe?.agents.find((item) => item.id === agentId) ?? null;
+}
+
 function nextCustomAgentId(current: AppUserConfig) {
   let index = 1;
 
@@ -724,6 +728,20 @@ export default function App() {
     });
   }
 
+  async function rerunEnvironmentProbe() {
+    if (!bridge || !canProbeEnvironment) {
+      return;
+    }
+
+    try {
+      const probe = await bridge.probeEnvironment();
+      setEnvironmentProbe(probe);
+      setBridgeError(null);
+    } catch (error) {
+      setBridgeError(error instanceof Error ? error.message : String(error));
+    }
+  }
+
   async function saveSettings() {
     if (!bridge || !configDraft) {
       return;
@@ -975,6 +993,13 @@ export default function App() {
                   >
                     应用推荐配置
                   </button>
+                  <button
+                    className="ghost-button"
+                    onClick={() => void rerunEnvironmentProbe()}
+                    type="button"
+                  >
+                    重新探测
+                  </button>
                 </div>
               </div>
             ) : (
@@ -989,6 +1014,11 @@ export default function App() {
             <div className="settings-list">
               {configDraft.agents.map((agent) => (
                 <div className="settings-card" key={agent.id}>
+                  {(() => {
+                    const detected = probeForAgent(environmentProbe, agent.id);
+
+                    return (
+                      <>
                   <div className="settings-card-header">
                     <strong>{agent.name}</strong>
                     <div className="settings-card-actions">
@@ -1034,9 +1064,21 @@ export default function App() {
                     </label>
                   ) : null}
 
-                  {environmentProbe ? (
+                  {detected ? (
                     <div className="settings-detected-notes">
-                      {(environmentProbe.agents.find((item) => item.id === agent.id)?.notes ?? []).join(" · ")}
+                      {detected.notes.join(" · ")}
+                    </div>
+                  ) : null}
+
+                  {detected?.appCandidates.length ? (
+                    <div className="settings-help-text">
+                      应用候选：{detected.appCandidates.join(" / ")}
+                    </div>
+                  ) : null}
+
+                  {detected?.logPathCandidates.length ? (
+                    <div className="settings-help-text">
+                      日志候选：{detected.logPathCandidates.join(" · ")}
                     </div>
                   ) : null}
 
@@ -1078,6 +1120,20 @@ export default function App() {
                     >
                       定位日志
                     </button>
+                    {detected?.logPath ? (
+                      <button
+                        className="ghost-button"
+                        onClick={() =>
+                          updateAgentConfig(agent.id, (current) => ({
+                            ...current,
+                            logPath: detected.logPath
+                          }))
+                        }
+                        type="button"
+                      >
+                        使用探测路径
+                      </button>
+                    ) : null}
                   </div>
 
                   <label className="settings-field">
@@ -1123,6 +1179,9 @@ export default function App() {
                     />
                     辅助进程聚合到主卡
                   </label>
+                      </>
+                    );
+                  })()}
                 </div>
               ))}
             </div>
