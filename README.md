@@ -1,129 +1,94 @@
 # Agent Pet
 
-一个用于实时查看本机 AI Agent 进程状态的桌面宠物原型项目。
+`Agent Pet` 是一个面向开发者的桌面宠物应用，用来在 macOS 桌面上查看本机 AI Agent 的运行状态。
 
-## 产品方向
+这不是云端面板，也不是托管服务。它的判断逻辑主要基于：
 
-这个应用分成两层：
+- 本地进程
+- 本地应用是否已安装
+- 本地日志路径
+- 本地 Web UI / localhost 入口
 
-1. 宠物层
-   - 常驻桌面
-   - 透明窗口
-   - 根据 Agent 状态切换表情、动作和提示语
+当前版本适合作为 `macOS alpha` 在 GitHub Releases 分发给技术用户试用。
 
-2. 监控层
-   - 读取本机进程
-   - 聚合不同 AI 工具的运行状态
-   - 向前端推送实时状态
+## 当前定位
 
-## 第一版建议功能
+- 平台：`macOS`
+- 发布形态：GitHub 下载试用版
+- 用户类型：已经在本机使用 AI Agent 的开发者
+- 目标体验：尽量开箱即用，识别不到时允许用户在设置页做少量修改后继续使用
 
-- 扫描本机与你开发相关的 Agent 进程
-- 显示在线、忙碌、报错、空闲四种状态
-- 点击宠物展开详情面板
-- 展示每个 Agent 的名称、PID、CPU、内存、运行时长、最近输出摘要
-- 系统托盘菜单支持显示/隐藏、刷新、退出
+## 这个版本解决什么问题
 
-## 技术方案
+- 用一个桌宠视图，统一查看多个 Agent 是否在忙
+- 在本地 App、CLI、Web UI 混用时，尽量识别出“谁在执行、谁在等待、谁需要注意”
+- 给每个 Agent 保留可手动修正的入口：
+  - 匹配关键字
+  - 日志路径
+  - 会话页面 URL
+  - 聚合策略
 
-- Electron: 桌面容器、透明悬浮窗、托盘、系统 API
-- React + TypeScript: 宠物 UI 与状态面板
-- Vite: 前端构建
-- Node 侧监控服务:
-  - 第一阶段直接调用系统命令获取进程信息
-  - 第二阶段接入你的实际 Agent 日志、任务队列和 API
+## 当前支持的 Agent 范围
 
-## 推荐的监控来源
+第一批内置适配器已经覆盖这些方向：
 
-可以按适配器方式逐步接入：
+- Codex
+- Claude Code
+- Cline
+- Aider
+- Trae
+- Windsurf
+- Cursor
+- Gemini
+- Kimi
+- Hermes
+- OpenClaw
 
-- `process` 适配器: 通过进程名、命令行关键字发现 Agent
-- `log` 适配器: 监听日志文件，提取最近状态
-- `http` 适配器: 读取本地 Agent 暴露的健康检查接口
-- `sdk` 适配器: 直接接你自己的 Agent 管理器
+说明：
 
-## 当前已实现
+- 这不代表所有机器都能 100% 自动识别。
+- 不同用户可能使用的是本地 App、CLI、VS Code 扩展、Web UI 或 localhost 页面。
+- 所以项目内同时提供了自动探测和手动修正。
 
-- 透明无边框悬浮窗
-- 托盘显示/隐藏与退出
-- 点击宠物展开或收起监控面板
-- 靠近屏幕边缘自动吸附
-- 窗口位置与展开状态持久化
-- 手动刷新和 3 秒轮询刷新
-- 基于规则表识别常见 AI Agent 进程
-- 用户配置文件模型
-- 设置页 UI
-- 安装包打包脚本
+更详细说明见 [SUPPORTED_AGENTS.md](./SUPPORTED_AGENTS.md)。
 
-## 监控结构
+## 当前能力
 
-当前监控源在：
+- 透明桌宠窗口
+- 顶部宠物状态和气泡播报
+- 展开后的 Agent 状态列表
+- 本地 App 拉起
+- Chrome 中打开 Web UI
+- 设置页手动改 Agent 配置
+- 首次自动探测建议
+- 用户配置持久化到本机
 
-- `electron/monitorSources.ts`
+## 不承诺的事情
 
-现在先接了进程扫描源，后面可以继续往这里加：
+当前版本不承诺：
 
-- 日志文件源
-- 本地 HTTP 健康检查源
-- 你自己的任务管理器或 Agent SDK
+- 适配所有 Agent
+- 在所有电脑上零配置生效
+- 提供云端同步
+- 直接上 Mac App Store
+- 已完成 Windows 支持
 
-## 规则配置
+## 安装与运行
 
-当前进程识别规则位于：
-
-- `shared/agentConfig.ts`
-
-你可以直接在这里扩展你自己的 Agent：
-
-- 修改 `AGENT_RULES`
-- 调整 `MONITOR_THRESHOLDS`
-- 配置 `AGENT_LOG_RULES`
-
-应用运行时的用户配置文件会保存在系统用户目录下，其他电脑安装后可以通过应用内设置页直接修改，不需要改源码。
-
-## 当前项目结构
-
-```text
-agent-pet/
-  electron/
-  shared/
-  src/
-  index.html
-  package.json
-  tsconfig.json
-  tsconfig.node.json
-  vite.config.ts
-```
-
-## 下一步
-
-1. 安装依赖
-2. 运行开发环境
-3. 先把你实际在用的 Agent 类型整理出来
-4. 补第一个真实适配器
-
-## 开发命令
+### 开发环境
 
 ```bash
 npm install
 npm run dev
 ```
 
-## 打包命令
-
-首次打包前先安装新增依赖：
+### 构建
 
 ```bash
-npm install
+npm run build
 ```
 
-构建安装包：
-
-```bash
-npm run dist
-```
-
-仅构建 macOS 安装包：
+### 打包 macOS 安装包
 
 ```bash
 npm run dist:mac
@@ -134,3 +99,57 @@ npm run dist:mac
 ```text
 release/
 ```
+
+## 推荐的首次使用流程
+
+1. 启动应用
+2. 打开设置页
+3. 查看“首次配置建议”
+4. 点击“应用推荐配置”
+5. 如果有未识别或识别不准的 Agent，再手动修改：
+   - 日志路径
+   - 会话页面 URL
+   - 匹配关键字
+
+## 项目结构
+
+```text
+agent-pet-github/
+  electron/
+  shared/
+  src/
+  package.json
+  README.md
+  PRIVACY.md
+  SUPPORTED_AGENTS.md
+```
+
+## 隐私说明
+
+这个项目会读取本机的部分运行时信息，例如：
+
+- 进程名和命令行关键字
+- 你手动配置或自动探测到的日志路径
+- 本地 localhost 入口
+
+默认目标是“尽量本地处理，不上传原始日志内容”。正式发布前请先阅读 [PRIVACY.md](./PRIVACY.md)。
+
+## GitHub 发布建议
+
+当前更适合这样发布：
+
+- 仓库标记为 `alpha`
+- GitHub Releases 上传 `dmg` 和 `zip`
+- README 写清支持范围和已知限制
+- 收集用户机器上的日志路径差异和适配反馈
+
+## 已知限制
+
+- 某些 Agent 只有进程在线，但没有标准日志，这时状态判断会偏弱
+- 某些桌面应用只在自己的私有存储里留下活动痕迹，需要单独适配
+- `Codex / Kimi / Hermes / OpenClaw` 这类工具目前仍然带有较强的本地生态依赖
+- 如果 preload 或本地执行桥接不完整，应用会退回到手动配置模式
+
+## 许可证
+
+本项目使用 [MIT License](./LICENSE)。

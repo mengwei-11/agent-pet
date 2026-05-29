@@ -11,7 +11,7 @@ import type {
 
 declare global {
   interface Window {
-    agentPet: AgentPetBridge;
+    agentPet?: AgentPetBridge;
   }
 }
 
@@ -356,6 +356,8 @@ export default function App() {
     });
   })();
 
+  const canProbeEnvironment = typeof bridge?.probeEnvironment === "function";
+
   useEffect(() => {
     let mounted = true;
 
@@ -371,7 +373,7 @@ export default function App() {
       bridge.getExpanded(),
       bridge.getScale(),
       bridge.getConfig(),
-      bridge.probeEnvironment()
+      canProbeEnvironment ? bridge.probeEnvironment() : Promise.resolve(null)
     ])
       .then(([data, savedExpanded, savedScale, config, probe]) => {
         if (mounted) {
@@ -380,6 +382,9 @@ export default function App() {
           setScale(savedScale);
           setConfigDraft(config);
           setEnvironmentProbe(probe);
+          if (!config.onboardingComplete) {
+            setSettingsOpen(true);
+          }
           setBridgeError(null);
         }
       })
@@ -402,7 +407,7 @@ export default function App() {
       unsubscribe();
       unsubscribeAlert();
     };
-  }, [bridge]);
+  }, [bridge, canProbeEnvironment]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -657,7 +662,8 @@ export default function App() {
         return {
           ...agent,
           enabled: detected.appDetected || detected.logDetected ? true : agent.enabled,
-          logPath: detected.logPath || agent.logPath
+          logPath: detected.logPath || agent.logPath,
+          dashboardUrl: detected.dashboardUrl || agent.dashboardUrl
         };
       })
     });
@@ -672,7 +678,7 @@ export default function App() {
 
     try {
       const saved = await bridge.saveConfig(configDraft);
-      const probe = await bridge.probeEnvironment();
+      const probe = canProbeEnvironment ? await bridge.probeEnvironment() : null;
       setConfigDraft(saved);
       setEnvironmentProbe(probe);
       const nextSnapshot = await bridge.refreshSnapshot();
@@ -826,7 +832,7 @@ export default function App() {
         </div>
       ) : null}
 
-      <div className={`panel ${expanded ? "" : "panel-hidden"}`}>
+        <div className={`panel ${expanded ? "" : "panel-hidden"}`}>
         <div className="panel-header">
           <div className="panel-title">
             <span>今日状态</span>
@@ -869,7 +875,9 @@ export default function App() {
             <div className="settings-toolbar">
               <div>
                 <div className="settings-title">监控设置</div>
-                <div className="settings-subtitle">这些配置会保存到本机，可在其他电脑上分别配置。</div>
+                <div className="settings-subtitle">
+                  这些配置会保存到本机。首次使用时，建议先应用一轮自动探测结果。
+                </div>
               </div>
               <div className="settings-actions">
                 <button
@@ -907,7 +915,14 @@ export default function App() {
                   </button>
                 </div>
               </div>
-            ) : null}
+            ) : (
+              <div className="settings-detection-card">
+                <div className="settings-title">兼容模式</div>
+                <div className="settings-subtitle">
+                  当前运行环境没有暴露自动探测接口。你仍然可以手动填写日志路径、入口 URL 和匹配关键字。
+                </div>
+              </div>
+            )}
 
             <div className="settings-list">
               {configDraft.agents.map((agent) => (

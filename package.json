@@ -1,10 +1,21 @@
 {
   "name": "agent-pet",
   "version": "0.1.0",
-  "private": true,
-  "description": "Desktop pet for monitoring local AI agent processes.",
+  "description": "A desktop pet for monitoring local AI agents across native apps, CLI tools, and Web UI sessions.",
   "main": "dist-electron/electron/main.js",
   "type": "module",
+  "license": "MIT",
+  "author": "a111",
+  "keywords": [
+    "electron",
+    "desktop-pet",
+    "ai-agent",
+    "monitoring",
+    "codex",
+    "kimi",
+    "claude-code",
+    "cursor"
+  ],
   "scripts": {
     "dev": "concurrently -k \"vite\" \"tsc -p tsconfig.node.json --watch\" \"wait-on tcp:5173 file:dist-electron/electron/main.js && electron dist-electron/electron/main.js\"",
     "build": "tsc -p tsconfig.node.json && vite build",
@@ -18,6 +29,7 @@
     "directories": {
       "output": "release"
     },
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "files": [
       "dist/**/*",
       "dist-electron/**/*",
@@ -29,7 +41,8 @@
         "dmg",
         "zip"
       ],
-      "category": "public.app-category.developer-tools"
+      "category": "public.app-category.developer-tools",
+      "hardenedRuntime": false
     }
   },
   "dependencies": {
