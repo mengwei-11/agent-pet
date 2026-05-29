@@ -100,7 +100,7 @@ export const AGENT_LOG_RULES: AgentLogRule[] = [
   },
   {
     agentId: "kimi",
-    path: "/Users/a111/.kimi/logs/kimi.log",
+    path: "/Users/a111/Library/Logs/kimi-desktop/main.log",
     tailLines: 12,
     errorMatchers: ["error", "failed", "exception"],
     runningMatchers: ["running", "started", "working", "processing", "created new session", "starting wire server"],

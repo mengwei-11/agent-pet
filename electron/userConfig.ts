@@ -7,6 +7,7 @@ import type { AppUserConfig, AgentMonitorConfigItem } from "../shared/config.js"
 
 let currentConfig: AppUserConfig | null = null;
 const DEPRECATED_AGENT_IDS = new Set(["cursor"]);
+const LEGACY_KIMI_LOG_PATH = "/Users/a111/.kimi/logs/kimi.log";
 
 function getConfigPath() {
   return path.join(app.getPath("userData"), "agent-pet-config.json");
@@ -53,6 +54,10 @@ function normalizeAgentConfig(
     (resolvedId === "codex" || resolvedId === "kimi") && !agent.dashboardUrl
       ? fallback.dashboardUrl
       : (agent.dashboardUrl ?? fallback.dashboardUrl);
+  const logPath =
+    resolvedId === "kimi" && (!agent.logPath || agent.logPath === LEGACY_KIMI_LOG_PATH)
+      ? fallback.logPath
+      : (agent.logPath ?? fallback.logPath);
 
   return {
     id: resolvedId,
@@ -62,7 +67,7 @@ function normalizeAgentConfig(
     matchers: Array.isArray(agent.matchers) ? agent.matchers.filter(Boolean) : fallback.matchers,
     dashboardUrl,
     statusUrl: agent.statusUrl ?? fallback.statusUrl,
-    logPath: agent.logPath ?? fallback.logPath,
+    logPath,
     tailLines: agent.tailLines ?? fallback.tailLines,
     errorMatchers:
       resolvedId === "hermes"

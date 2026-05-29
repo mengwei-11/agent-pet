@@ -23,6 +23,7 @@ interface AgentLogSummary {
 }
 
 const LOG_STALE_MS = 1000 * 60 * 20;
+const KIMI_ACTIVITY_WINDOW_MS = 1000 * 60 * 3;
 
 function isInfrastructureSummary(summary: string) {
   const lower = summary.toLowerCase();
@@ -404,6 +405,61 @@ function normalizeLogSummary(agentId: string, summary: string) {
   return `${cleaned.slice(0, 29)}...`;
 }
 
+async function newestMtimeMs(paths: string[]) {
+  const mtimes = await Promise.all(
+    paths.map(async (targetPath) => {
+      try {
+        const stat = await fs.stat(targetPath);
+        return stat.mtimeMs;
+      } catch {
+        return 0;
+      }
+    })
+  );
+
+  return Math.max(...mtimes, 0);
+}
+
+async function readKimiDesktopSummary(logPath: string): Promise<AgentLogSummary | null> {
+  try {
+    const sessionDir = `${process.env.HOME ?? ""}/Library/Application Support/kimi-desktop/Session Storage`;
+    const localStoragePath =
+      `${process.env.HOME ?? ""}/Library/Application Support/kimi-desktop/Local Storage/leveldb/000003.log`;
+    const sessionEntries = await fs.readdir(sessionDir);
+    const sessionPaths = sessionEntries.map((entry) => `${sessionDir}/${entry}`);
+    const latestDesktopActivity = await newestMtimeMs([logPath, localStoragePath, ...sessionPaths]);
+
+    if (!latestDesktopActivity) {
+      return null;
+    }
+
+    const detail = await fs.readFile(logPath, "utf8").catch(() => "");
+    const tail = detail
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .slice(-12)
+      .join("\n");
+
+    if (Date.now() - latestDesktopActivity <= KIMI_ACTIVITY_WINDOW_MS) {
+      return {
+        summary: "Kimi 正在当前会话中",
+        status: "running",
+        phase: "正在处理这轮对话",
+        detail: tail || undefined
+      };
+    }
+
+    return {
+      summary: "Kimi 桌面进程在线",
+      status: "idle",
+      detail: tail || undefined
+    };
+  } catch {
+    return null;
+  }
+}
+
 async function readCodexSqliteSummary(): Promise<AgentLogSummary | null> {
   try {
     const dbPath = `${process.env.HOME ?? ""}/.codex/logs_2.sqlite`;
@@ -494,6 +550,13 @@ async function readLogSummaries() {
           const codexSummary = await readCodexSqliteSummary();
           if (codexSummary) {
             return [rule.id, codexSummary] as const;
+          }
+        }
+
+        if (rule.id === "kimi") {
+          const kimiSummary = await readKimiDesktopSummary(rule.logPath);
+          if (kimiSummary) {
+            return [rule.id, kimiSummary] as const;
           }
         }
 
