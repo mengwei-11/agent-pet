@@ -525,6 +525,12 @@ body {
   margin-bottom: 10px;
 }
 
+.settings-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .settings-detected-notes {
   margin-bottom: 10px;
   font-size: 12px;
@@ -561,6 +567,16 @@ body {
   font-size: 12px;
   font-weight: 700;
   color: #334155;
+}
+
+.settings-remove-button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .settings-checkbox input {

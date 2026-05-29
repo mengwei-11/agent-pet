@@ -308,6 +308,16 @@ function textToList(value: string) {
     .filter(Boolean);
 }
 
+function nextCustomAgentId(current: AppUserConfig) {
+  let index = 1;
+
+  while (current.agents.some((agent) => agent.id === `custom-agent-${index}`)) {
+    index += 1;
+  }
+
+  return `custom-agent-${index}`;
+}
+
 export default function App() {
   const bridge = window.agentPet;
   const [snapshot, setSnapshot] = useState<AgentSnapshot>(emptySnapshot);
@@ -646,6 +656,51 @@ export default function App() {
     });
   }
 
+  function addCustomAgent() {
+    setConfigDraft((current) => {
+      if (!current) {
+        return current;
+      }
+
+      const id = nextCustomAgentId(current);
+
+      return {
+        ...current,
+        agents: [
+          ...current.agents,
+          {
+            id,
+            name: `Custom Agent ${current.agents.filter((agent) => agent.id.startsWith("custom-agent-")).length + 1}`,
+            enabled: true,
+            aggregateByAgent: false,
+            matchers: [],
+            dashboardUrl: "",
+            statusUrl: "",
+            logPath: "",
+            tailLines: 10,
+            errorMatchers: ["error", "failed", "exception"],
+            runningMatchers: ["running", "started", "working", "processing"],
+            progressMatchers: ["%", "/", "step", "phase"],
+            completionMatchers: ["completed", "finished", "done", "success"]
+          }
+        ]
+      };
+    });
+  }
+
+  function removeAgent(agentId: string) {
+    setConfigDraft((current) => {
+      if (!current) {
+        return current;
+      }
+
+      return {
+        ...current,
+        agents: current.agents.filter((agent) => agent.id !== agentId)
+      };
+    });
+  }
+
   function applyDetectedConfig() {
     if (!configDraft || !environmentProbe) {
       return;
@@ -661,7 +716,7 @@ export default function App() {
 
         return {
           ...agent,
-          enabled: detected.appDetected || detected.logDetected ? true : agent.enabled,
+          enabled: detected.appDetected || detected.logDetected,
           logPath: detected.logPath || agent.logPath,
           dashboardUrl: detected.dashboardUrl || agent.dashboardUrl
         };
@@ -882,6 +937,13 @@ export default function App() {
               <div className="settings-actions">
                 <button
                   className="ghost-button"
+                  onClick={addCustomAgent}
+                  type="button"
+                >
+                  新增自定义 Agent
+                </button>
+                <button
+                  className="ghost-button"
                   disabled={savingConfig}
                   onClick={() => setSettingsOpen(false)}
                   type="button"
@@ -929,20 +991,48 @@ export default function App() {
                 <div className="settings-card" key={agent.id}>
                   <div className="settings-card-header">
                     <strong>{agent.name}</strong>
-                    <label className="settings-checkbox">
+                    <div className="settings-card-actions">
+                      <label className="settings-checkbox">
+                        <input
+                          checked={agent.enabled}
+                          onChange={(event) =>
+                            updateAgentConfig(agent.id, (current) => ({
+                              ...current,
+                              enabled: event.target.checked
+                            }))
+                          }
+                          type="checkbox"
+                        />
+                        启用
+                      </label>
+                      {agent.id.startsWith("custom-agent-") ? (
+                        <button
+                          className="settings-remove-button"
+                          onClick={() => removeAgent(agent.id)}
+                          type="button"
+                        >
+                          删除
+                        </button>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  {agent.id.startsWith("custom-agent-") ? (
+                    <label className="settings-field">
+                      <span>显示名称</span>
                       <input
-                        checked={agent.enabled}
+                        className="settings-input"
                         onChange={(event) =>
                           updateAgentConfig(agent.id, (current) => ({
                             ...current,
-                            enabled: event.target.checked
+                            name: event.target.value
                           }))
                         }
-                        type="checkbox"
+                        type="text"
+                        value={agent.name}
                       />
-                      启用
                     </label>
-                  </div>
+                  ) : null}
 
                   {environmentProbe ? (
                     <div className="settings-detected-notes">

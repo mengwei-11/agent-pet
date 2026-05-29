@@ -76,7 +76,11 @@ export const AGENT_RULES: AgentRule[] = [
     id: "windsurf",
     name: "Windsurf",
     matchers: ["windsurf", "codeium"],
-    appNames: ["Windsurf"]
+    appNames: ["Windsurf"],
+    logPathCandidates: [
+      "~/Library/Application Support/Windsurf/logs/main.log",
+      "~/Library/Application Support/Codeium/logs/main.log"
+    ]
   },
   {
     id: "cursor",
@@ -128,6 +132,66 @@ export const AGENT_RULES: AgentRule[] = [
     dashboardUrl: "http://127.0.0.1:18789/chat?session=agent%3Amain%3Amain"
   },
   {
+    id: "roo-code",
+    name: "Roo Code",
+    matchers: ["roo", "roo-code", "roocode"],
+    appNames: ["Roo Code"],
+    logPathCandidates: [
+      "~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/logs/roo.log",
+      "~/Library/Application Support/Cursor/User/globalStorage/rooveterinaryinc.roo-cline/logs/roo.log"
+    ]
+  },
+  {
+    id: "goose",
+    name: "Goose",
+    matchers: ["goose", "block/goose"],
+    appNames: ["Goose"],
+    logPathCandidates: [
+      "~/.config/goose/logs/latest.log",
+      "~/.local/state/goose/logs/latest.log"
+    ]
+  },
+  {
+    id: "openhands",
+    name: "OpenHands",
+    matchers: ["openhands", "all-hands-ai", "allhands"],
+    appNames: ["OpenHands"],
+    logPathCandidates: [
+      "~/.openhands/logs/latest.log",
+      "~/.config/openhands/logs/latest.log"
+    ]
+  },
+  {
+    id: "qoder",
+    name: "Qoder",
+    matchers: ["qoder"],
+    appNames: ["Qoder"],
+    logPathCandidates: [
+      "~/.qoder/logs/latest.log",
+      "~/Library/Logs/Qoder/main.log"
+    ]
+  },
+  {
+    id: "marscode",
+    name: "MarsCode",
+    matchers: ["marscode", "doubao", "trae-cn"],
+    appNames: ["MarsCode", "豆包 MarsCode"],
+    logPathCandidates: [
+      "~/.marscode/logs/latest.log",
+      "~/Library/Logs/MarsCode/main.log"
+    ]
+  },
+  {
+    id: "coze",
+    name: "Coze",
+    matchers: ["coze", "扣子"],
+    appNames: ["Coze", "扣子"],
+    logPathCandidates: [
+      "~/.coze/logs/latest.log",
+      "~/Library/Logs/Coze/main.log"
+    ]
+  },
+  {
     id: "node-agent",
     name: "Node Agent",
     matchers: ["tsx", "ts-node", "node worker", "node agent"]
@@ -149,7 +213,7 @@ export const MONITOR_THRESHOLDS: MonitorThresholds = {
 export const AGENT_LOG_RULES: AgentLogRule[] = [
   {
     agentId: "codex",
-    path: "/Users/a111/.codex/log/codex-tui.log",
+    path: "~/.codex/log/codex-tui.log",
     tailLines: 10,
     errorMatchers: ["error", "failed", "exception", "unauthorized", "invalid_api_key"],
     runningMatchers: ["running", "started", "working", "retrying", "falling back"],
@@ -157,7 +221,7 @@ export const AGENT_LOG_RULES: AgentLogRule[] = [
   },
   {
     agentId: "claude-code",
-    path: "/Users/a111/.claude/logs/latest.log",
+    path: "~/.claude/logs/latest.log",
     tailLines: 10,
     errorMatchers: ["error", "failed", "exception"],
     runningMatchers: ["running", "started", "working"],
@@ -165,7 +229,7 @@ export const AGENT_LOG_RULES: AgentLogRule[] = [
   },
   {
     agentId: "cline",
-    path: "/Users/a111/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/logs/cline.log",
+    path: "~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/logs/cline.log",
     tailLines: 12,
     errorMatchers: ["error", "failed", "exception"],
     runningMatchers: ["running", "started", "working", "thinking", "tool"],
@@ -173,7 +237,7 @@ export const AGENT_LOG_RULES: AgentLogRule[] = [
   },
   {
     agentId: "aider",
-    path: "/Users/a111/.aider.log",
+    path: "~/.aider.log",
     tailLines: 12,
     errorMatchers: ["error", "failed", "exception"],
     runningMatchers: ["running", "started", "working", "processing"],
@@ -181,7 +245,7 @@ export const AGENT_LOG_RULES: AgentLogRule[] = [
   },
   {
     agentId: "trae",
-    path: "/Users/a111/Library/Application Support/Trae/logs/main.log",
+    path: "~/Library/Application Support/Trae/logs/main.log",
     tailLines: 12,
     errorMatchers: ["error", "failed", "exception"],
     runningMatchers: ["running", "started", "working", "processing"],
@@ -189,7 +253,7 @@ export const AGENT_LOG_RULES: AgentLogRule[] = [
   },
   {
     agentId: "cursor",
-    path: "/Users/a111/Library/Application Support/Cursor/logs/main.log",
+    path: "~/Library/Application Support/Cursor/logs/main.log",
     tailLines: 12,
     errorMatchers: ["error", "failed", "exception"],
     runningMatchers: ["running", "started", "working", "processing", "thinking"],
@@ -197,7 +261,7 @@ export const AGENT_LOG_RULES: AgentLogRule[] = [
   },
   {
     agentId: "gemini",
-    path: "/Users/a111/.gemini/logs/latest.log",
+    path: "~/.gemini/logs/latest.log",
     tailLines: 12,
     errorMatchers: ["error", "failed", "exception"],
     runningMatchers: ["running", "started", "working", "processing", "thinking"],
@@ -205,7 +269,7 @@ export const AGENT_LOG_RULES: AgentLogRule[] = [
   },
   {
     agentId: "kimi",
-    path: "/Users/a111/Library/Logs/kimi-desktop/main.log",
+    path: "~/Library/Logs/kimi-desktop/main.log",
     tailLines: 12,
     errorMatchers: ["error", "failed", "exception"],
     runningMatchers: ["running", "started", "working", "processing", "created new session", "starting wire server"],
@@ -214,7 +278,7 @@ export const AGENT_LOG_RULES: AgentLogRule[] = [
   },
   {
     agentId: "hermes",
-    path: "/Users/a111/.hermes/logs/agent.log",
+    path: "~/.hermes/logs/agent.log",
     tailLines: 12,
     errorMatchers: ["error", "failed", "exception", "panic", "traceback", "unauthorized"],
     runningMatchers: ["running", "started", "working", "processing", "api call #", "tool ", "pondering", "thinking", "replying"],
@@ -223,11 +287,59 @@ export const AGENT_LOG_RULES: AgentLogRule[] = [
   },
   {
     agentId: "openclaw",
-    path: "/Users/a111/.openclaw/logs/commands.log",
+    path: "~/.openclaw/logs/commands.log",
     tailLines: 12,
     errorMatchers: ["error", "failed", "exception"],
     runningMatchers: ["running", "started", "working", "processing", "\"action\":\"new\""],
     progressMatchers: ["%", "/", "step", "phase"],
+    completionMatchers: ["completed", "finished", "done", "success"]
+  },
+  {
+    agentId: "roo-code",
+    path: "~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/logs/roo.log",
+    tailLines: 12,
+    errorMatchers: ["error", "failed", "exception"],
+    runningMatchers: ["running", "started", "working", "thinking", "tool"],
+    completionMatchers: ["completed", "finished", "done", "success"]
+  },
+  {
+    agentId: "goose",
+    path: "~/.config/goose/logs/latest.log",
+    tailLines: 12,
+    errorMatchers: ["error", "failed", "exception"],
+    runningMatchers: ["running", "started", "working", "thinking", "tool"],
+    completionMatchers: ["completed", "finished", "done", "success"]
+  },
+  {
+    agentId: "openhands",
+    path: "~/.openhands/logs/latest.log",
+    tailLines: 12,
+    errorMatchers: ["error", "failed", "exception"],
+    runningMatchers: ["running", "started", "working", "processing"],
+    completionMatchers: ["completed", "finished", "done", "success"]
+  },
+  {
+    agentId: "qoder",
+    path: "~/.qoder/logs/latest.log",
+    tailLines: 12,
+    errorMatchers: ["error", "failed", "exception"],
+    runningMatchers: ["running", "started", "working", "processing", "thinking"],
+    completionMatchers: ["completed", "finished", "done", "success"]
+  },
+  {
+    agentId: "marscode",
+    path: "~/.marscode/logs/latest.log",
+    tailLines: 12,
+    errorMatchers: ["error", "failed", "exception"],
+    runningMatchers: ["running", "started", "working", "processing", "thinking"],
+    completionMatchers: ["completed", "finished", "done", "success"]
+  },
+  {
+    agentId: "coze",
+    path: "~/.coze/logs/latest.log",
+    tailLines: 12,
+    errorMatchers: ["error", "failed", "exception"],
+    runningMatchers: ["running", "started", "working", "processing"],
     completionMatchers: ["completed", "finished", "done", "success"]
   }
 ];

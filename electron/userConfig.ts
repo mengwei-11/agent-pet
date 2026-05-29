@@ -6,8 +6,24 @@ import type { AgentLogRule, AgentRule } from "../shared/agentConfig.js";
 import type { AppUserConfig, AgentMonitorConfigItem } from "../shared/config.js";
 
 let currentConfig: AppUserConfig | null = null;
-const DEPRECATED_AGENT_IDS = new Set(["cursor"]);
-const LEGACY_KIMI_LOG_PATH = "/Users/a111/.kimi/logs/kimi.log";
+const DEPRECATED_AGENT_IDS = new Set<string>();
+const LEGACY_KIMI_LOG_PATH = path.join(process.env.HOME ?? "", ".kimi/logs/kimi.log");
+
+function expandHome(input: string) {
+  if (input.startsWith("~/")) {
+    return path.join(process.env.HOME ?? "", input.slice(2));
+  }
+
+  return input;
+}
+
+function firstCandidateLogPath(rule: AgentRule, logRule?: AgentLogRule) {
+  if (rule.logPathCandidates?.length) {
+    return expandHome(rule.logPathCandidates[0]);
+  }
+
+  return logRule?.path ? expandHome(logRule.path) : "";
+}
 
 function getConfigPath() {
   return path.join(app.getPath("userData"), "agent-pet-config.json");
@@ -22,7 +38,7 @@ function buildAgentConfig(rule: AgentRule, logRule?: AgentLogRule): AgentMonitor
     matchers: [...rule.matchers],
     dashboardUrl: rule.dashboardUrl ?? "",
     statusUrl: rule.statusUrl ?? "",
-    logPath: logRule?.path ?? "",
+    logPath: firstCandidateLogPath(rule, logRule),
     tailLines: logRule?.tailLines ?? 10,
     errorMatchers: [...(logRule?.errorMatchers ?? ["error", "failed", "exception"])],
     runningMatchers: [...(logRule?.runningMatchers ?? ["running", "started", "working"])],

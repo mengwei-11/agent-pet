@@ -1,7 +1,7 @@
 import { exec } from "node:child_process";
 import { promises as fs } from "node:fs";
 import { promisify } from "node:util";
-import { MONITOR_THRESHOLDS } from "../shared/agentConfig.js";
+import { AGENT_RULES, MONITOR_THRESHOLDS } from "../shared/agentConfig.js";
 import { getUserConfig } from "./userConfig.js";
 import type { AgentHealth, AgentProcess } from "../shared/types";
 import type { AgentMonitorConfigItem } from "../shared/config.js";
@@ -24,6 +24,34 @@ interface AgentLogSummary {
 
 const LOG_STALE_MS = 1000 * 60 * 20;
 const KIMI_ACTIVITY_WINDOW_MS = 1000 * 60 * 3;
+
+function expandHome(input: string) {
+  if (input.startsWith("~/")) {
+    return `${process.env.HOME ?? ""}/${input.slice(2)}`;
+  }
+
+  return input;
+}
+
+async function resolveExistingLogPath(agentId: string, configuredLogPath: string) {
+  const candidates = [
+    configuredLogPath,
+    ...(AGENT_RULES.find((rule) => rule.id === agentId)?.logPathCandidates ?? [])
+  ]
+    .filter(Boolean)
+    .map(expandHome);
+
+  for (const candidate of candidates) {
+    try {
+      await fs.access(candidate);
+      return candidate;
+    } catch {
+      // try next candidate
+    }
+  }
+
+  return configuredLogPath ? expandHome(configuredLogPath) : "";
+}
 
 function isInfrastructureSummary(summary: string) {
   const lower = summary.toLowerCase();
@@ -546,6 +574,8 @@ async function readLogSummaries() {
   const entries = await Promise.all(
     agents.map(async (rule) => {
       try {
+        const resolvedLogPath = await resolveExistingLogPath(rule.id, rule.logPath);
+
         if (rule.id === "codex") {
           const codexSummary = await readCodexSqliteSummary();
           if (codexSummary) {
@@ -554,18 +584,18 @@ async function readLogSummaries() {
         }
 
         if (rule.id === "kimi") {
-          const kimiSummary = await readKimiDesktopSummary(rule.logPath);
+          const kimiSummary = await readKimiDesktopSummary(resolvedLogPath);
           if (kimiSummary) {
             return [rule.id, kimiSummary] as const;
           }
         }
 
-        const stat = await fs.stat(rule.logPath);
+        const stat = await fs.stat(resolvedLogPath);
         if (Date.now() - stat.mtimeMs > LOG_STALE_MS) {
           return null;
         }
 
-        const raw = await fs.readFile(rule.logPath, "utf8");
+        const raw = await fs.readFile(resolvedLogPath, "utf8");
         const lines = raw
           .split("\n")
           .map((line) => line.trim())

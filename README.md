@@ -43,6 +43,12 @@
 - Kimi
 - Hermes
 - OpenClaw
+- Roo Code
+- Goose
+- OpenHands
+- Qoder
+- MarsCode
+- Coze
 
 说明：
 
@@ -60,6 +66,7 @@
 - 本地 App 拉起
 - Chrome 中打开 Web UI
 - 设置页手动改 Agent 配置
+- 设置页新增 / 删除自定义 Agent
 - 首次自动探测建议
 - 用户配置持久化到本机
 

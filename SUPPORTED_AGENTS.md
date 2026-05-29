@@ -18,11 +18,17 @@
 - Windsurf
 - Cline
 - Trae
+- Roo Code
 
 ### 命令行或脚本型
 
 - Aider
 - Gemini
+- Goose
+- OpenHands
+- Qoder
+- MarsCode
+- Coze
 
 ## 每个适配器目前会优先看什么
 

@@ -22,6 +22,12 @@
 - Kimi
 - Hermes
 - OpenClaw
+- Roo Code
+- Goose
+- OpenHands
+- Qoder
+- MarsCode
+- Coze
 
 ## 这一版重点
 
