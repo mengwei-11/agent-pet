@@ -11,6 +11,13 @@
 
 当前版本适合作为 `macOS alpha` 在 GitHub Releases 分发给技术用户试用。
 
+补充文档：
+
+- [Supported Agents](./SUPPORTED_AGENTS.md)
+- [Privacy Notes](./PRIVACY.md)
+- [Contributing](./CONTRIBUTING.md)
+- [Release Checklist](./RELEASE_CHECKLIST.md)
+
 ## 当前定位
 
 - 平台：`macOS`
@@ -149,6 +156,12 @@ agent-pet-github/
 - GitHub Releases 上传 `dmg` 和 `zip`
 - README 写清支持范围和已知限制
 - 收集用户机器上的日志路径差异和适配反馈
+
+仓库已经预留：
+
+- GitHub Actions CI
+- Bug report issue template
+- Agent support request template
 
 ## 已知限制
 
