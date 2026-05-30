@@ -836,8 +836,8 @@ export default function App() {
             onPointerDown={(event) => {
               event.preventDefault();
               event.stopPropagation();
+              void closeWindow();
             }}
-            onClick={() => void closeWindow()}
             type="button"
           >
             ×
@@ -848,8 +848,8 @@ export default function App() {
             onPointerDown={(event) => {
               event.preventDefault();
               event.stopPropagation();
+              void minimizeWindow();
             }}
-            onClick={() => void minimizeWindow()}
             type="button"
           >
             −

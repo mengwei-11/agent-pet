@@ -65,6 +65,8 @@ body {
 }
 
 .topbar {
+  position: relative;
+  z-index: 8;
   display: grid;
   grid-template-columns: 72px 1fr 72px;
   align-items: center;
@@ -81,11 +83,12 @@ body {
 }
 
 .window-controls {
+  position: relative;
   display: flex;
   gap: 8px;
   -webkit-app-region: no-drag;
   justify-self: start;
-  z-index: 6;
+  z-index: 12;
 }
 
 .window-control {
@@ -785,7 +788,7 @@ body {
 
 .resize-handle {
   position: absolute;
-  z-index: 5;
+  z-index: 3;
   -webkit-app-region: no-drag;
 }
 
