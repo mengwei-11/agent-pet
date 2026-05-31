@@ -5,6 +5,7 @@ export interface AgentRule {
   aggregateByAgent?: boolean;
   appNames?: string[];
   appBundleIds?: string[];
+  appDataPathCandidates?: string[];
   logPathCandidates?: string[];
   dashboardUrl?: string;
   dashboardCandidates?: string[];
@@ -119,6 +120,9 @@ export const AGENT_RULES: AgentRule[] = [
     aggregateByAgent: true,
     appNames: ["Kimi"],
     appBundleIds: ["com.moonshot.kimichat"],
+    appDataPathCandidates: [
+      "~/Library/Application Support/kimi-desktop"
+    ],
     logPathCandidates: [
       "~/Library/Logs/kimi-desktop/main.log",
       "~/.kimi/logs/kimi.log"

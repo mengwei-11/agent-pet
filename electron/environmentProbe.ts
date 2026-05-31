@@ -133,6 +133,20 @@ async function detectApp(appNames: string[] | undefined, bundleIds: string[] | u
   };
 }
 
+async function detectAppDataPath(paths: string[] | undefined) {
+  if (!paths?.length) {
+    return false;
+  }
+
+  for (const candidate of paths) {
+    if (await pathExists(expandHome(candidate))) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 async function detectLogPath(paths: string[] | undefined) {
   if (!paths?.length) {
     return { logDetected: false, logPath: "" };
@@ -225,17 +239,19 @@ export async function probeEnvironment(): Promise<EnvironmentProbe> {
   const agents: AgentEnvironmentProbeItem[] = await Promise.all(
     AGENT_RULES.map(async (rule) => {
       const app = await detectApp(rule.appNames, rule.appBundleIds);
+      const appDataDetected = await detectAppDataPath(rule.appDataPathCandidates);
+      const appDetected = app.appDetected || appDataDetected;
       const log = await detectLogPath(rule.logPathCandidates);
       const dashboard = await detectDashboard(
         rule.dashboardCandidates ?? (rule.dashboardUrl ? [rule.dashboardUrl] : []),
-        app.appDetected,
+        appDetected,
         log.logDetected,
         app.appName,
         app.appBundleId
       );
       const notes: string[] = [];
 
-      if (app.appDetected) {
+      if (appDetected) {
         notes.push(`已检测到本地应用 ${app.appName}`);
       } else if (rule.appNames?.length) {
         notes.push(`未检测到本地应用 ${rule.appNames.join(" / ")}`);
@@ -260,7 +276,7 @@ export async function probeEnvironment(): Promise<EnvironmentProbe> {
       return {
         id: rule.id,
         name: rule.name,
-        appDetected: app.appDetected,
+        appDetected,
         appName: app.appName,
         appBundleId: app.appBundleId,
         appCandidates: [...(rule.appNames ?? [])],
