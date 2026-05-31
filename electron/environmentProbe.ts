@@ -24,12 +24,46 @@ async function pathExists(targetPath: string) {
   }
 }
 
-async function detectApp(appNames: string[] | undefined) {
-  if (!appNames?.length) {
+async function detectApp(appNames: string[] | undefined, bundleIds: string[] | undefined) {
+  if (!appNames?.length && !bundleIds?.length) {
     return { appDetected: false, appName: undefined };
   }
 
-  for (const appName of appNames) {
+  for (const bundleId of bundleIds ?? []) {
+    try {
+      const { stdout } = await execFileAsync("mdfind", [`kMDItemCFBundleIdentifier == "${bundleId}"`]);
+      const firstMatch = stdout
+        .split("\n")
+        .map((line) => line.trim())
+        .find(Boolean);
+
+      if (firstMatch) {
+        const matchedName = appNames?.[0] ?? bundleId;
+        return { appDetected: true, appName: matchedName };
+      }
+    } catch {
+      // Ignore Spotlight errors and keep trying other probes.
+    }
+
+    try {
+      const { stdout } = await execFileAsync("osascript", [
+        "-e",
+        'tell application "System Events" to get bundle identifier of every process'
+      ]);
+      const bundleList = stdout
+        .split(",")
+        .map((item) => item.trim());
+
+      if (bundleList.includes(bundleId)) {
+        const matchedName = appNames?.[0] ?? bundleId;
+        return { appDetected: true, appName: matchedName };
+      }
+    } catch {
+      // Ignore GUI process probe errors and keep trying other probes.
+    }
+  }
+
+  for (const appName of appNames ?? []) {
     const candidates = [
       path.join("/Applications", `${appName}.app`),
       path.join(process.env.HOME ?? "", "Applications", `${appName}.app`)
@@ -92,7 +126,7 @@ async function detectApp(appNames: string[] | undefined) {
     }
   }
 
-  return { appDetected: false, appName: appNames[0] };
+  return { appDetected: false, appName: appNames?.[0] ?? bundleIds?.[0] };
 }
 
 async function detectLogPath(paths: string[] | undefined) {
@@ -167,7 +201,7 @@ async function detectDashboard(
 export async function probeEnvironment(): Promise<EnvironmentProbe> {
   const agents: AgentEnvironmentProbeItem[] = await Promise.all(
     AGENT_RULES.map(async (rule) => {
-      const app = await detectApp(rule.appNames);
+      const app = await detectApp(rule.appNames, rule.appBundleIds);
       const log = await detectLogPath(rule.logPathCandidates);
       const dashboard = await detectDashboard(
         rule.dashboardCandidates ?? (rule.dashboardUrl ? [rule.dashboardUrl] : []),

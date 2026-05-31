@@ -257,19 +257,29 @@ function senderWindow(event: IpcMainInvokeEvent) {
 async function openDashboardInChrome(url: string) {
   if (url === "codex://activate") {
     try {
-      await execFileAsync("open", ["-a", "Codex"]);
+      await execFileAsync("open", ["-b", "com.openai.codex"]);
       return;
     } catch {
-      return;
+      try {
+        await execFileAsync("open", ["-a", "Codex"]);
+        return;
+      } catch {
+        return;
+      }
     }
   }
 
   if (url === "kimi://activate") {
     try {
-      await execFileAsync("open", ["-a", "Kimi"]);
+      await execFileAsync("open", ["-b", "com.moonshot.kimichat"]);
       return;
     } catch {
-      return;
+      try {
+        await execFileAsync("open", ["-a", "Kimi"]);
+        return;
+      } catch {
+        return;
+      }
     }
   }
 

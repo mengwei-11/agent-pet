@@ -4,6 +4,7 @@ export interface AgentRule {
   matchers: string[];
   aggregateByAgent?: boolean;
   appNames?: string[];
+  appBundleIds?: string[];
   logPathCandidates?: string[];
   dashboardUrl?: string;
   dashboardCandidates?: string[];
@@ -33,6 +34,7 @@ export const AGENT_RULES: AgentRule[] = [
     name: "Codex",
     matchers: ["codex", "openai"],
     appNames: ["Codex"],
+    appBundleIds: ["com.openai.codex"],
     logPathCandidates: [
       "~/.codex/logs_2.sqlite",
       "~/.codex/log/codex-tui.log"
@@ -45,6 +47,7 @@ export const AGENT_RULES: AgentRule[] = [
     name: "Claude Code",
     matchers: ["claude", "anthropic"],
     appNames: ["Claude", "Claude Code"],
+    appBundleIds: ["ai.anthropic.claudefordesktop"],
     logPathCandidates: ["~/.claude/logs/latest.log"]
   },
   {
@@ -72,6 +75,7 @@ export const AGENT_RULES: AgentRule[] = [
     name: "Trae",
     matchers: ["trae"],
     appNames: ["Trae"],
+    appBundleIds: ["com.trae.app"],
     logPathCandidates: [
       "~/Library/Application Support/Trae/logs/main.log"
     ]
@@ -81,6 +85,7 @@ export const AGENT_RULES: AgentRule[] = [
     name: "Windsurf",
     matchers: ["windsurf", "codeium"],
     appNames: ["Windsurf"],
+    appBundleIds: ["com.exafunction.windsurf"],
     logPathCandidates: [
       "~/Library/Application Support/Windsurf/logs/main.log",
       "~/Library/Application Support/Codeium/logs/main.log"
@@ -91,6 +96,7 @@ export const AGENT_RULES: AgentRule[] = [
     name: "Cursor",
     matchers: ["cursor", "cursor-agent"],
     appNames: ["Cursor"],
+    appBundleIds: ["com.todesktop.230313mzl4w4u92"],
     logPathCandidates: [
       "~/Library/Application Support/Cursor/logs/main.log"
     ]
@@ -100,6 +106,7 @@ export const AGENT_RULES: AgentRule[] = [
     name: "Gemini",
     matchers: ["gemini", "google-generativeai", "gemini-cli"],
     appNames: ["Gemini"],
+    appBundleIds: ["com.google.gemini"],
     logPathCandidates: [
       "~/.gemini/logs/latest.log",
       "~/.config/gemini/logs/latest.log"
@@ -111,6 +118,7 @@ export const AGENT_RULES: AgentRule[] = [
     matchers: ["kimi", "moonshot"],
     aggregateByAgent: true,
     appNames: ["Kimi"],
+    appBundleIds: ["com.moonshot.kimichat"],
     logPathCandidates: [
       "~/Library/Logs/kimi-desktop/main.log",
       "~/.kimi/logs/kimi.log"
@@ -124,6 +132,7 @@ export const AGENT_RULES: AgentRule[] = [
     matchers: ["hermes", "hermes-web-ui", "hermes-agent"],
     aggregateByAgent: true,
     appNames: ["Hermes"],
+    appBundleIds: ["ai.hermes.desktop"],
     logPathCandidates: ["~/.hermes/logs/agent.log"],
     dashboardUrl: "http://localhost:8648/",
     dashboardCandidates: [
@@ -137,6 +146,7 @@ export const AGENT_RULES: AgentRule[] = [
     matchers: ["openclaw", "openclaw/dist/index.js"],
     aggregateByAgent: true,
     appNames: ["OpenClaw"],
+    appBundleIds: ["ai.openclaw.desktop"],
     logPathCandidates: ["~/.openclaw/logs/commands.log"],
     dashboardUrl: "http://127.0.0.1:18789/",
     dashboardCandidates: [
@@ -149,6 +159,7 @@ export const AGENT_RULES: AgentRule[] = [
     name: "Roo Code",
     matchers: ["roo", "roo-code", "roocode"],
     appNames: ["Roo Code"],
+    appBundleIds: ["com.roocode.desktop"],
     logPathCandidates: [
       "~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/logs/roo.log",
       "~/Library/Application Support/Cursor/User/globalStorage/rooveterinaryinc.roo-cline/logs/roo.log",
@@ -160,6 +171,7 @@ export const AGENT_RULES: AgentRule[] = [
     name: "Goose",
     matchers: ["goose", "block/goose"],
     appNames: ["Goose"],
+    appBundleIds: ["ai.block.goose"],
     logPathCandidates: [
       "~/.config/goose/logs/latest.log",
       "~/.local/state/goose/logs/latest.log"
@@ -170,6 +182,7 @@ export const AGENT_RULES: AgentRule[] = [
     name: "OpenHands",
     matchers: ["openhands", "all-hands-ai", "allhands"],
     appNames: ["OpenHands"],
+    appBundleIds: ["ai.allhands.desktop"],
     logPathCandidates: [
       "~/.openhands/logs/latest.log",
       "~/.config/openhands/logs/latest.log"
@@ -180,6 +193,7 @@ export const AGENT_RULES: AgentRule[] = [
     name: "Qoder",
     matchers: ["qoder"],
     appNames: ["Qoder", "Qoder CN"],
+    appBundleIds: ["com.qoder.ide", "com.aliyun.lingma.ide"],
     logPathCandidates: [
       "~/.qoder/logs/latest.log",
       "~/Library/Logs/Qoder/main.log",
@@ -191,6 +205,7 @@ export const AGENT_RULES: AgentRule[] = [
     name: "MarsCode",
     matchers: ["marscode", "doubao", "trae-cn"],
     appNames: ["MarsCode", "豆包 MarsCode", "豆包"],
+    appBundleIds: ["com.bot.neotix.doubao"],
     logPathCandidates: [
       "~/.marscode/logs/latest.log",
       "~/Library/Logs/MarsCode/main.log",
@@ -202,6 +217,7 @@ export const AGENT_RULES: AgentRule[] = [
     name: "Coze",
     matchers: ["coze", "扣子"],
     appNames: ["Coze", "扣子"],
+    appBundleIds: ["com.coze.desktop"],
     logPathCandidates: [
       "~/.coze/logs/latest.log",
       "~/Library/Logs/Coze/main.log"
