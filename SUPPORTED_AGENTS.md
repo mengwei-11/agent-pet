@@ -48,9 +48,11 @@
 - App 名称不同
 - 入口 URL 不同
 - 运行在 CLI、原生 App 或 localhost Web UI 中
+- 运行在 VS Code、Cursor、Windsurf、Qoder 等不同编辑器生态里
 
 当前 GitHub 版已经尽量把默认入口做成更通用的形式，不再优先写死作者个人的会话 URL。
 如果探测到了可用入口，设置页可以直接“使用探测入口”。
+对于 Cline、Roo Code 这类扩展型 Agent，当前也会同时尝试多种编辑器的常见 `globalStorage` 路径。
 
 所以设置页保留了这些手动修改项：
 

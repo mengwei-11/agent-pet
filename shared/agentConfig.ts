@@ -53,7 +53,9 @@ export const AGENT_RULES: AgentRule[] = [
     matchers: ["cline"],
     appNames: ["Cline"],
     logPathCandidates: [
-      "~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/logs/cline.log"
+      "~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/logs/cline.log",
+      "~/Library/Application Support/Cursor/User/globalStorage/saoudrizwan.claude-dev/logs/cline.log",
+      "~/Library/Application Support/Windsurf/User/globalStorage/saoudrizwan.claude-dev/logs/cline.log"
     ]
   },
   {
@@ -149,7 +151,8 @@ export const AGENT_RULES: AgentRule[] = [
     appNames: ["Roo Code"],
     logPathCandidates: [
       "~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/logs/roo.log",
-      "~/Library/Application Support/Cursor/User/globalStorage/rooveterinaryinc.roo-cline/logs/roo.log"
+      "~/Library/Application Support/Cursor/User/globalStorage/rooveterinaryinc.roo-cline/logs/roo.log",
+      "~/Library/Application Support/Windsurf/User/globalStorage/rooveterinaryinc.roo-cline/logs/roo.log"
     ]
   },
   {
@@ -176,20 +179,22 @@ export const AGENT_RULES: AgentRule[] = [
     id: "qoder",
     name: "Qoder",
     matchers: ["qoder"],
-    appNames: ["Qoder"],
+    appNames: ["Qoder", "Qoder CN"],
     logPathCandidates: [
       "~/.qoder/logs/latest.log",
-      "~/Library/Logs/Qoder/main.log"
+      "~/Library/Logs/Qoder/main.log",
+      "~/Library/Logs/Qoder CN/main.log"
     ]
   },
   {
     id: "marscode",
     name: "MarsCode",
     matchers: ["marscode", "doubao", "trae-cn"],
-    appNames: ["MarsCode", "豆包 MarsCode"],
+    appNames: ["MarsCode", "豆包 MarsCode", "豆包"],
     logPathCandidates: [
       "~/.marscode/logs/latest.log",
-      "~/Library/Logs/MarsCode/main.log"
+      "~/Library/Logs/MarsCode/main.log",
+      "~/Library/Logs/Doubao/main.log"
     ]
   },
   {
