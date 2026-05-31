@@ -228,6 +228,20 @@ async function detectDashboard(
     }
   }
 
+  if (logDetected) {
+    const localhostCandidate = candidates.find((candidate) =>
+      candidate.startsWith("http://localhost") || candidate.startsWith("http://127.0.0.1")
+    );
+
+    if (localhostCandidate) {
+      return {
+        dashboardDetected: true,
+        dashboardUrl: localhostCandidate,
+        dashboardCandidates: candidates
+      };
+    }
+  }
+
   return {
     dashboardDetected: false,
     dashboardUrl: candidates[0] ?? "",
