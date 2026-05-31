@@ -216,9 +216,10 @@ export async function probeEnvironment(): Promise<EnvironmentProbe> {
 
   return {
     platform: process.platform,
-    readyCount: agents.filter((item) => item.appDetected || item.logDetected).length,
+    readyCount: agents.filter((item) => item.appDetected || item.logDetected || item.dashboardDetected).length,
     appDetectedCount: agents.filter((item) => item.appDetected).length,
     logDetectedCount: agents.filter((item) => item.logDetected).length,
+    dashboardDetectedCount: agents.filter((item) => item.dashboardDetected).length,
     agents
   };
 }

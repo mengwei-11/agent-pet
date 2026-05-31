@@ -58,6 +58,7 @@ export interface EnvironmentProbe {
   readyCount: number;
   appDetectedCount: number;
   logDetectedCount: number;
+  dashboardDetectedCount: number;
   agents: AgentEnvironmentProbeItem[];
 }
 

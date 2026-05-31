@@ -720,7 +720,7 @@ export default function App() {
 
         return {
           ...agent,
-          enabled: detected.appDetected || detected.logDetected,
+          enabled: detected.appDetected || detected.logDetected || detected.dashboardDetected,
           logPath: detected.logPath || agent.logPath,
           dashboardUrl: detected.dashboardUrl || agent.dashboardUrl
         };
@@ -983,7 +983,7 @@ export default function App() {
               <div className="settings-detection-card">
                 <div className="settings-title">首次配置建议</div>
                 <div className="settings-subtitle">
-                  已探测到 {environmentProbe.readyCount} 个可用 Agent，本地应用 {environmentProbe.appDetectedCount} 个，日志路径 {environmentProbe.logDetectedCount} 个。
+                  已探测到 {environmentProbe.readyCount} 个可用 Agent，本地应用 {environmentProbe.appDetectedCount} 个，日志路径 {environmentProbe.logDetectedCount} 个，可用入口 {environmentProbe.dashboardDetectedCount} 个。
                 </div>
                 <div className="settings-inline-actions">
                   <button
