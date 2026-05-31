@@ -26,7 +26,7 @@ async function pathExists(targetPath: string) {
 
 async function detectApp(appNames: string[] | undefined, bundleIds: string[] | undefined) {
   if (!appNames?.length && !bundleIds?.length) {
-    return { appDetected: false, appName: undefined };
+    return { appDetected: false, appName: undefined, appBundleId: undefined };
   }
 
   for (const bundleId of bundleIds ?? []) {
@@ -39,7 +39,7 @@ async function detectApp(appNames: string[] | undefined, bundleIds: string[] | u
 
       if (firstMatch) {
         const matchedName = appNames?.[0] ?? bundleId;
-        return { appDetected: true, appName: matchedName };
+        return { appDetected: true, appName: matchedName, appBundleId: bundleId };
       }
     } catch {
       // Ignore Spotlight errors and keep trying other probes.
@@ -56,7 +56,7 @@ async function detectApp(appNames: string[] | undefined, bundleIds: string[] | u
 
       if (bundleList.includes(bundleId)) {
         const matchedName = appNames?.[0] ?? bundleId;
-        return { appDetected: true, appName: matchedName };
+        return { appDetected: true, appName: matchedName, appBundleId: bundleId };
       }
     } catch {
       // Ignore GUI process probe errors and keep trying other probes.
@@ -71,7 +71,7 @@ async function detectApp(appNames: string[] | undefined, bundleIds: string[] | u
 
     for (const candidate of candidates) {
       if (await pathExists(candidate)) {
-        return { appDetected: true, appName };
+        return { appDetected: true, appName, appBundleId: bundleIds?.[0] };
       }
     }
 
@@ -83,7 +83,7 @@ async function detectApp(appNames: string[] | undefined, bundleIds: string[] | u
         .find(Boolean);
 
       if (firstMatch) {
-        return { appDetected: true, appName };
+        return { appDetected: true, appName, appBundleId: bundleIds?.[0] };
       }
     } catch {
       // Ignore Spotlight errors and keep trying other probes.
@@ -101,7 +101,7 @@ async function detectApp(appNames: string[] | undefined, bundleIds: string[] | u
         });
 
       if (matchedProcess) {
-        return { appDetected: true, appName };
+        return { appDetected: true, appName, appBundleId: bundleIds?.[0] };
       }
     } catch {
       // Ignore process probe errors and keep trying other probes.
@@ -119,14 +119,18 @@ async function detectApp(appNames: string[] | undefined, bundleIds: string[] | u
         .find((item) => item === lowerAppName);
 
       if (matchedProcessName) {
-        return { appDetected: true, appName };
+        return { appDetected: true, appName, appBundleId: bundleIds?.[0] };
       }
     } catch {
       // Ignore GUI process probe errors and keep trying other probes.
     }
   }
 
-  return { appDetected: false, appName: appNames?.[0] ?? bundleIds?.[0] };
+  return {
+    appDetected: false,
+    appName: appNames?.[0] ?? bundleIds?.[0],
+    appBundleId: bundleIds?.[0]
+  };
 }
 
 async function detectLogPath(paths: string[] | undefined) {
@@ -146,9 +150,27 @@ async function detectLogPath(paths: string[] | undefined) {
 
 async function detectDashboard(
   urls: string[] | undefined,
-  appDetected: boolean
+  appDetected: boolean,
+  appName: string | undefined,
+  appBundleId: string | undefined
 ) {
   if (!urls?.length) {
+    if (appDetected && appBundleId) {
+      return {
+        dashboardDetected: true,
+        dashboardUrl: `app://bundle/${encodeURIComponent(appBundleId)}`,
+        dashboardCandidates: [`app://bundle/${encodeURIComponent(appBundleId)}`]
+      };
+    }
+
+    if (appDetected && appName) {
+      return {
+        dashboardDetected: true,
+        dashboardUrl: `app://name/${encodeURIComponent(appName)}`,
+        dashboardCandidates: [`app://name/${encodeURIComponent(appName)}`]
+      };
+    }
+
     return { dashboardDetected: false, dashboardUrl: "", dashboardCandidates: [] as string[] };
   }
 
@@ -205,7 +227,9 @@ export async function probeEnvironment(): Promise<EnvironmentProbe> {
       const log = await detectLogPath(rule.logPathCandidates);
       const dashboard = await detectDashboard(
         rule.dashboardCandidates ?? (rule.dashboardUrl ? [rule.dashboardUrl] : []),
-        app.appDetected
+        app.appDetected,
+        app.appName,
+        app.appBundleId
       );
       const notes: string[] = [];
 
@@ -236,6 +260,7 @@ export async function probeEnvironment(): Promise<EnvironmentProbe> {
         name: rule.name,
         appDetected: app.appDetected,
         appName: app.appName,
+        appBundleId: app.appBundleId,
         appCandidates: [...(rule.appNames ?? [])],
         logDetected: log.logDetected,
         logPath: log.logPath,

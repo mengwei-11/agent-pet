@@ -255,6 +255,28 @@ function senderWindow(event: IpcMainInvokeEvent) {
 }
 
 async function openDashboardInChrome(url: string) {
+  if (url.startsWith("app://bundle/")) {
+    const bundleId = decodeURIComponent(url.replace("app://bundle/", ""));
+
+    try {
+      await execFileAsync("open", ["-b", bundleId]);
+      return;
+    } catch {
+      return;
+    }
+  }
+
+  if (url.startsWith("app://name/")) {
+    const appName = decodeURIComponent(url.replace("app://name/", ""));
+
+    try {
+      await execFileAsync("open", ["-a", appName]);
+      return;
+    } catch {
+      return;
+    }
+  }
+
   if (url === "codex://activate") {
     try {
       await execFileAsync("open", ["-b", "com.openai.codex"]);
