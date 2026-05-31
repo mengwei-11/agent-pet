@@ -8,6 +8,8 @@ import type { AppUserConfig, AgentMonitorConfigItem } from "../shared/config.js"
 let currentConfig: AppUserConfig | null = null;
 const DEPRECATED_AGENT_IDS = new Set<string>();
 const LEGACY_KIMI_LOG_PATH = path.join(process.env.HOME ?? "", ".kimi/logs/kimi.log");
+const LEGACY_HERMES_DASHBOARD_URL = "http://localhost:8648/#/hermes/session/mpo74xjzfa24qp";
+const LEGACY_OPENCLAW_DASHBOARD_URL = "http://127.0.0.1:18789/chat?session=agent%3Amain%3Amain";
 
 function expandHome(input: string) {
   if (input.startsWith("~/")) {
@@ -70,7 +72,10 @@ function normalizeAgentConfig(
   const dashboardUrl =
     (resolvedId === "codex" || resolvedId === "kimi") && !agent.dashboardUrl
       ? fallback.dashboardUrl
-      : (agent.dashboardUrl ?? fallback.dashboardUrl);
+      : ((resolvedId === "hermes" && agent.dashboardUrl === LEGACY_HERMES_DASHBOARD_URL) ||
+        (resolvedId === "openclaw" && agent.dashboardUrl === LEGACY_OPENCLAW_DASHBOARD_URL)
+          ? fallback.dashboardUrl
+          : (agent.dashboardUrl ?? fallback.dashboardUrl));
   const logPath =
     resolvedId === "kimi" && (!agent.logPath || agent.logPath === LEGACY_KIMI_LOG_PATH)
       ? fallback.logPath

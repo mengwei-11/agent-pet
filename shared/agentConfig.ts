@@ -6,6 +6,7 @@ export interface AgentRule {
   appNames?: string[];
   logPathCandidates?: string[];
   dashboardUrl?: string;
+  dashboardCandidates?: string[];
   statusUrl?: string;
 }
 
@@ -36,7 +37,8 @@ export const AGENT_RULES: AgentRule[] = [
       "~/.codex/logs_2.sqlite",
       "~/.codex/log/codex-tui.log"
     ],
-    dashboardUrl: "codex://activate"
+    dashboardUrl: "codex://activate",
+    dashboardCandidates: ["codex://activate"]
   },
   {
     id: "claude-code",
@@ -111,7 +113,8 @@ export const AGENT_RULES: AgentRule[] = [
       "~/Library/Logs/kimi-desktop/main.log",
       "~/.kimi/logs/kimi.log"
     ],
-    dashboardUrl: "kimi://activate"
+    dashboardUrl: "kimi://activate",
+    dashboardCandidates: ["kimi://activate", "https://kimi.moonshot.cn/"]
   },
   {
     id: "hermes",
@@ -120,7 +123,11 @@ export const AGENT_RULES: AgentRule[] = [
     aggregateByAgent: true,
     appNames: ["Hermes"],
     logPathCandidates: ["~/.hermes/logs/agent.log"],
-    dashboardUrl: "http://localhost:8648/#/hermes/session/mpo74xjzfa24qp"
+    dashboardUrl: "http://localhost:8648/",
+    dashboardCandidates: [
+      "http://localhost:8648/",
+      "http://127.0.0.1:8648/"
+    ]
   },
   {
     id: "openclaw",
@@ -129,7 +136,11 @@ export const AGENT_RULES: AgentRule[] = [
     aggregateByAgent: true,
     appNames: ["OpenClaw"],
     logPathCandidates: ["~/.openclaw/logs/commands.log"],
-    dashboardUrl: "http://127.0.0.1:18789/chat?session=agent%3Amain%3Amain"
+    dashboardUrl: "http://127.0.0.1:18789/",
+    dashboardCandidates: [
+      "http://127.0.0.1:18789/",
+      "http://localhost:18789/"
+    ]
   },
   {
     id: "roo-code",

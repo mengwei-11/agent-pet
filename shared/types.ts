@@ -48,6 +48,8 @@ export interface AgentEnvironmentProbeItem {
   logPath: string;
   logPathCandidates: string[];
   dashboardUrl: string;
+  dashboardCandidates: string[];
+  dashboardDetected: boolean;
   notes: string[];
 }
 

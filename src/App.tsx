@@ -1081,6 +1081,11 @@ export default function App() {
                       日志候选：{detected.logPathCandidates.join(" · ")}
                     </div>
                   ) : null}
+                  {detected?.dashboardCandidates.length ? (
+                    <div className="settings-help-text">
+                      入口候选：{detected.dashboardCandidates.join(" · ")}
+                    </div>
+                  ) : null}
 
                   <label className="settings-field">
                     <span>匹配关键字</span>
@@ -1150,6 +1155,22 @@ export default function App() {
                       value={agent.dashboardUrl}
                     />
                   </label>
+                  <div className="settings-inline-actions">
+                    {detected?.dashboardUrl ? (
+                      <button
+                        className="ghost-button"
+                        onClick={() =>
+                          updateAgentConfig(agent.id, (current) => ({
+                            ...current,
+                            dashboardUrl: detected.dashboardUrl
+                          }))
+                        }
+                        type="button"
+                      >
+                        使用探测入口
+                      </button>
+                    ) : null}
+                  </div>
 
                   <label className="settings-field">
                     <span>状态接口 URL</span>
