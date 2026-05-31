@@ -151,6 +151,7 @@ async function detectLogPath(paths: string[] | undefined) {
 async function detectDashboard(
   urls: string[] | undefined,
   appDetected: boolean,
+  logDetected: boolean,
   appName: string | undefined,
   appBundleId: string | undefined
 ) {
@@ -176,7 +177,7 @@ async function detectDashboard(
 
   const candidates = [...urls];
 
-  if (appDetected) {
+  if (appDetected || logDetected) {
     const appSchemeUrl = candidates.find((candidate) => candidate.includes("://") && !candidate.startsWith("http"));
     if (appSchemeUrl) {
       return {
@@ -228,6 +229,7 @@ export async function probeEnvironment(): Promise<EnvironmentProbe> {
       const dashboard = await detectDashboard(
         rule.dashboardCandidates ?? (rule.dashboardUrl ? [rule.dashboardUrl] : []),
         app.appDetected,
+        log.logDetected,
         app.appName,
         app.appBundleId
       );
