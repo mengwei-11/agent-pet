@@ -21,6 +21,7 @@
     "build": "tsc -p tsconfig.node.json && vite build",
     "dist": "npm run build && electron-builder",
     "dist:mac": "npm run build && electron-builder --mac",
+    "dist:mac:alpha": "npm run build && bash ./scripts/pack-mac-alpha.sh",
     "preview": "vite preview"
   },
   "build": {

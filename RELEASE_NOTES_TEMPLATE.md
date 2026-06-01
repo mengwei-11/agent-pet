@@ -43,6 +43,14 @@
 - 某些桌面应用只留下弱活动信号，状态判断仍然可能需要继续调优
 - 当前更适合 GitHub alpha 试用，不建议承诺 App Store 级稳定性
 
+## 首次打开说明
+
+- 当前发布版没有经过 Apple notarization 公证
+- 第一次从 GitHub 下载后打开，macOS 可能会提示无法验证应用
+- 推荐先把 `Agent Pet.app` 拖到 `Applications`
+- 然后在 Finder 里右键 `Agent Pet.app` -> `打开`
+- 如果仍被拦截，进入 `系统设置 -> 隐私与安全性`，点击 `仍要打开`
+
 ## 希望用户反馈什么
 
 - 你的 Agent 名称和运行方式

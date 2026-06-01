@@ -90,6 +90,49 @@
 
 ## 安装与运行
 
+### 直接下载安装版
+
+当前 GitHub Release 提供：
+
+- `Agent.Pet-0.1.0-mac-arm64.dmg`
+- `Agent.Pet-0.1.0-mac-arm64.zip`
+
+推荐优先使用 `DMG`。`ZIP` 也可以用，但两者在首次打开时都会遇到同一类 macOS 安全提示。
+
+### 首次打开 macOS 提示
+
+当前版本是 GitHub `alpha`，没有走 Apple notarization 公证。
+
+这意味着你第一次打开 `Agent Pet.app` 时，很可能会看到类似提示：
+
+- `Apple 无法验证 “Agent Pet” 是否包含可能危害 Mac 安全或隐私的恶意软件`
+
+这不代表下载包已损坏，更常见的原因是：
+
+- 应用来自 GitHub 下载
+- 应用尚未经过 Apple 公证
+
+建议按这个顺序处理：
+
+1. 把 `Agent Pet.app` 拖到 `Applications`
+2. 在 Finder 里右键 `Agent Pet.app`
+3. 选择 `打开`
+4. 如果仍被拦截，进入 `系统设置 -> 隐私与安全性`
+5. 在页面下方找到 `Agent Pet` 的拦截提示，点击 `仍要打开`
+
+如果你更习惯命令行，也可以手动解除隔离：
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Agent Pet.app"
+```
+
+### ZIP 和 DMG 的区别
+
+- `DMG`：更接近普通 macOS 应用安装方式，推荐优先使用
+- `ZIP`：适合直接下载和解压试用，但首次打开时同样可能被 Gatekeeper 拦截
+
+如果 `ZIP` 解压后提示无法打开，优先按上面的“首次打开 macOS 提示”步骤处理，而不是把它当成损坏包。
+
 ### 开发环境
 
 ```bash
